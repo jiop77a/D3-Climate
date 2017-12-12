@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Main from './main.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
-    <div>React Application!</div>,
+    <Main />,
     document.getElementById('root')
   );
 });
