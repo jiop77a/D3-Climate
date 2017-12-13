@@ -11,7 +11,7 @@ class CowFarts extends Component {
 
     return (
       <div> The Chart Goes here</div>
-    )
+    );
   }
 }
 
