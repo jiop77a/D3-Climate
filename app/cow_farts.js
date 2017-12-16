@@ -14,8 +14,8 @@ class CowFarts extends Component {
   componentDidMount() {
 
     let getBeef = async () => {
-      let beef = await fetch("https://young-everglades-14913.herokuapp.com/agriculture");
-      let array = await beef.json();
+      let agriculture = await fetch("https://young-everglades-14913.herokuapp.com/agriculture");
+      let array = await agriculture.json();
       let BeefFarts = this.findEmissions(array, 'Beef Cattle', 'Enteric Fermentation');
       let DairyFarts = this.findEmissions(array, 'Dairy Cattle', 'Enteric Fermentation')
       return {BeefFarts, DairyFarts};
@@ -54,7 +54,7 @@ class CowFarts extends Component {
   render() {
 
     let chart = new ReactFauxDOM.Element('div');
-    
+
     if (!this.state) {
       return (
         <div>Waiting...</div>
@@ -63,9 +63,6 @@ class CowFarts extends Component {
       let {BeefFarts, DairyFarts} = this.state;
       let data = this.makeData(BeefFarts, DairyFarts);
       console.log(data);
-
-
-
 
     // let data = [
     //   [1990, 119.1, 39.4],
@@ -100,8 +97,6 @@ class CowFarts extends Component {
     let chart_height    =   400;
     let padding = 50;
 
-
-
     //svg
 
     let svg = d3.select(chart)
@@ -110,31 +105,30 @@ class CowFarts extends Component {
                 .attr('height', chart_height);
 
     let x_scale = d3.scaleLinear()
-            .domain([1990, 2015])
-            .range([padding, chart_width - padding * 2]);
+                .domain([1990, 2015])
+                .range([padding, chart_width - padding * 2]);
 
     let y_scale = d3.scaleLinear()
-            .domain([
-              d3.min(data, d => d[2]),
-              d3.max(data, d => d[1])
-            ])
-            .range([chart_height - padding, padding]);
+                .domain([
+                  d3.min(data, d => d[2]),
+                  d3.max(data, d => d[1])
+                ])
+                .range([chart_height - padding, padding]);
 
     let r_scale = d3.scaleLinear()
-              .domain([
-                d3.min(data, d => d[2]),
-                d3.max(data, d => d[1])
-              ])
-              .range([1, 10]);
+                .domain([
+                  d3.min(data, d => d[2]),
+                  d3.max(data, d => d[1])
+                ])
+                .range([1, 10]);
 
     //axis
 
     let x_axis = d3.axisBottom(x_scale)
-                    .tickFormat(d3.format("d"))
-                    .ticks(20);
-                    // .ticks(6)
-                    // .tickValues([0, 150, 250, 600, 700]);
-
+                .tickFormat(d3.format("d"))
+                .ticks(20);
+                // .ticks(6)
+                // .tickValues([0, 150, 250, 600, 700]);
 
     svg.append('g')
       .attr('class', 'x-axis')
@@ -144,7 +138,6 @@ class CowFarts extends Component {
     let y_axis = d3.axisLeft(y_scale)
       .ticks(5);
       // .tickFormat(d => d + '%')
-
 
     svg.append('g')
       .attr('class', 'y-axis')
@@ -170,17 +163,17 @@ class CowFarts extends Component {
       .attr('r', d => r_scale(d[2]))
       .attr('fill', 'green');
 
-    }
 
-    return (
+      return (
 
-      <div>
-        <h2>Here is some fancy data:</h2>
-        <div className='alex-chart'>
-          {chart.toReact()}
+        <div>
+          <h2>Here is some fancy data:</h2>
+          <div className='alex-chart'>
+            {chart.toReact()}
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 }
 
