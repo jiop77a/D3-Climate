@@ -5,44 +5,102 @@ import * as d3 from 'd3';
 import ReactFauxDOM from 'react-faux-dom';
 
 class CowFarts extends Component {
+  constructor(props) {
+    super(props);
+    this.state = null;
+  }
 
+
+  componentDidMount() {
+
+    let getBeef = async () => {
+      let beef = await fetch("https://young-everglades-14913.herokuapp.com/agriculture");
+      let array = await beef.json();
+      let BeefFarts = this.findEmissions(array, 'Beef Cattle', 'Enteric Fermentation');
+      let DairyFarts = this.findEmissions(array, 'Dairy Cattle', 'Enteric Fermentation')
+      return {BeefFarts, DairyFarts};
+      };
+
+
+    getBeef().then(result => {
+      // console.log(result);
+      this.setState(result);
+      })
+    }
+
+
+
+
+
+  findEmissions(array, key, productOf) {
+    for (let i = 0; i < array.length; i++) {
+      let category = array[i];
+      if (category.key === key
+          && category.productOf === productOf) {
+        return category.emissionsByYear;
+        }
+      }
+    }
+
+  makeData(beef, dairy) {
+    let data = []
+    Object.keys(beef).forEach(year => {
+
+      data.push([parseInt(year), beef[year], dairy[year]])
+    })
+    return data;
+  }
 
   render() {
 
-    let data = [
-      [1990, 119.1, 39.4],
-      [1991, 119.7, 39],
-      [1992, 125, 38.5],
-      [1993, 127.7, 38.2],
-      [1994, 131.3, 37.6],
-      [1995, 135.5, 37.5],
-      [1996, 134.8, 37],
-      [1997, 131.5, 36.9],
-      [1998, 129.8, 36.6],
-      [1999, 129, 37.6],
-      [2000, 126.7, 38],
-      [2001, 125.9, 37.7],
-      [2002, 126, 37.8],
-      [2003, 126, 38],
-      [2004, 123.9, 36.9],
-      [2005, 125.2, 37.6],
-      [2006, 127, 38.4],
-      [2007, 128.1, 40],
-      [2008, 126.9, 40.6],
-      [2009, 125.8, 41],
-      [2010, 124.6, 40.7],
-      [2011, 121.8, 41.1],
-      [2012, 119.1, 41.7],
-      [2013, 118, 41.6],
-      [2014, 116.5, 42],
-      [2015, 118.1, 42.6]
-    ];
+    let chart = new ReactFauxDOM.Element('div');
+    
+    if (!this.state) {
+      return (
+        <div>Waiting...</div>
+      );
+    } else {
+      let {BeefFarts, DairyFarts} = this.state;
+      let data = this.makeData(BeefFarts, DairyFarts);
+      console.log(data);
+
+
+
+
+    // let data = [
+    //   [1990, 119.1, 39.4],
+    //   [1991, 119.7, 39],
+    //   [1992, 125, 38.5],
+    //   [1993, 127.7, 38.2],
+    //   [1994, 131.3, 37.6],
+    //   [1995, 135.5, 37.5],
+    //   [1996, 134.8, 37],
+    //   [1997, 131.5, 36.9],
+    //   [1998, 129.8, 36.6],
+    //   [1999, 129, 37.6],
+    //   [2000, 126.7, 38],
+    //   [2001, 125.9, 37.7],
+    //   [2002, 126, 37.8],
+    //   [2003, 126, 38],
+    //   [2004, 123.9, 36.9],
+    //   [2005, 125.2, 37.6],
+    //   [2006, 127, 38.4],
+    //   [2007, 128.1, 40],
+    //   [2008, 126.9, 40.6],
+    //   [2009, 125.8, 41],
+    //   [2010, 124.6, 40.7],
+    //   [2011, 121.8, 41.1],
+    //   [2012, 119.1, 41.7],
+    //   [2013, 118, 41.6],
+    //   [2014, 116.5, 42],
+    //   [2015, 118.1, 42.6]
+    // ];
 
     let chart_width     =   800;
     let chart_height    =   400;
     let padding = 50;
 
-    let chart = new ReactFauxDOM.Element('div');
+
 
     //svg
 
@@ -70,7 +128,7 @@ class CowFarts extends Component {
               .range([1, 10]);
 
     //axis
-    
+
     let x_axis = d3.axisBottom(x_scale)
                     .tickFormat(d3.format("d"))
                     .ticks(20);
@@ -112,9 +170,10 @@ class CowFarts extends Component {
       .attr('r', d => r_scale(d[2]))
       .attr('fill', 'green');
 
-
+    }
 
     return (
+
       <div>
         <h2>Here is some fancy data:</h2>
         <div className='alex-chart'>
@@ -124,9 +183,5 @@ class CowFarts extends Component {
     );
   }
 }
-
-CowFarts.defaultProps = {
-  chart: 'loading'
-};
 
 export default CowFarts;
