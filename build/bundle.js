@@ -29586,45 +29586,48 @@ var CowFarts = function (_Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
-      var getBeef = function () {
-        var _ref = __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_1_babel_runtime_regenerator___default.a.mark(function _callee() {
-          var beef, array, BeefFarts, DairyFarts;
-          return __WEBPACK_IMPORTED_MODULE_1_babel_runtime_regenerator___default.a.wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  _context.next = 2;
-                  return fetch("https://young-everglades-14913.herokuapp.com/agriculture");
-
-                case 2:
-                  beef = _context.sent;
-                  _context.next = 5;
-                  return beef.json();
-
-                case 5:
-                  array = _context.sent;
-                  BeefFarts = _this2.findEmissions(array, 'Beef Cattle', 'Enteric Fermentation');
-                  DairyFarts = _this2.findEmissions(array, 'Dairy Cattle', 'Enteric Fermentation');
-                  return _context.abrupt('return', { BeefFarts: BeefFarts, DairyFarts: DairyFarts });
-
-                case 9:
-                case 'end':
-                  return _context.stop();
-              }
-            }
-          }, _callee, _this2);
-        }));
-
-        return function getBeef() {
-          return _ref.apply(this, arguments);
-        };
-      }();
-
-      getBeef().then(function (result) {
+      this.getBeef().then(function (result) {
         // console.log(result);
         _this2.setState(result);
       });
     }
+  }, {
+    key: 'getBeef',
+    value: function () {
+      var _ref = __WEBPACK_IMPORTED_MODULE_2_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_1_babel_runtime_regenerator___default.a.mark(function _callee() {
+        var agriculture, array, BeefFarts, DairyFarts;
+        return __WEBPACK_IMPORTED_MODULE_1_babel_runtime_regenerator___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return fetch("https://young-everglades-14913.herokuapp.com/agriculture");
+
+              case 2:
+                agriculture = _context.sent;
+                _context.next = 5;
+                return agriculture.json();
+
+              case 5:
+                array = _context.sent;
+                BeefFarts = this.findEmissions(array, 'Beef Cattle', 'Enteric Fermentation');
+                DairyFarts = this.findEmissions(array, 'Dairy Cattle', 'Enteric Fermentation');
+                return _context.abrupt('return', { BeefFarts: BeefFarts, DairyFarts: DairyFarts });
+
+              case 9:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function getBeef() {
+        return _ref.apply(this, arguments);
+      }
+
+      return getBeef;
+    }()
   }, {
     key: 'findEmissions',
     value: function findEmissions(array, key, productOf) {
@@ -29646,108 +29649,83 @@ var CowFarts = function (_Component) {
       return data;
     }
   }, {
+    key: 'makeChart',
+    value: function makeChart(chart) {
+      var _state = this.state,
+          BeefFarts = _state.BeefFarts,
+          DairyFarts = _state.DairyFarts;
+
+      var data = this.makeData(BeefFarts, DairyFarts);
+      console.log(data);
+
+      var chart_width = 800;
+      var chart_height = 400;
+      var padding = 50;
+
+      //svg
+
+      var svg = __WEBPACK_IMPORTED_MODULE_9_d3__["g" /* select */](chart).append('svg').attr('width', chart_width).attr('height', chart_height);
+
+      var x_scale = __WEBPACK_IMPORTED_MODULE_9_d3__["f" /* scaleLinear */]().domain([1990, 2015]).range([padding, chart_width - padding * 2]);
+
+      var y_scale = __WEBPACK_IMPORTED_MODULE_9_d3__["f" /* scaleLinear */]().domain([__WEBPACK_IMPORTED_MODULE_9_d3__["e" /* min */](data, function (d) {
+        return d[2];
+      }), __WEBPACK_IMPORTED_MODULE_9_d3__["d" /* max */](data, function (d) {
+        return d[1];
+      })]).range([chart_height - padding, padding]);
+
+      var r_scale = __WEBPACK_IMPORTED_MODULE_9_d3__["f" /* scaleLinear */]().domain([__WEBPACK_IMPORTED_MODULE_9_d3__["e" /* min */](data, function (d) {
+        return d[2];
+      }), __WEBPACK_IMPORTED_MODULE_9_d3__["d" /* max */](data, function (d) {
+        return d[1];
+      })]).range([1, 10]);
+
+      //axis
+
+      var x_axis = __WEBPACK_IMPORTED_MODULE_9_d3__["a" /* axisBottom */](x_scale).tickFormat(__WEBPACK_IMPORTED_MODULE_9_d3__["c" /* format */]("d")).ticks(20);
+      // .ticks(6)
+      // .tickValues([0, 150, 250, 600, 700]);
+
+      svg.append('g').attr('class', 'x-axis').attr('transform', 'translate(0,' + (chart_height - padding) + ')').call(x_axis);
+
+      var y_axis = __WEBPACK_IMPORTED_MODULE_9_d3__["b" /* axisLeft */](y_scale).ticks(5);
+      // .tickFormat(d => d + '%')
+
+      svg.append('g').attr('class', 'y-axis').attr('transform', 'translate(' + padding + ', 0)').call(y_axis);
+
+      //circles
+      svg.selectAll('circle').data(data).enter().append('circle').attr('cx', function (d) {
+        return x_scale(d[0]);
+      }).attr('cy', function (d) {
+        return y_scale(d[1]);
+      }).attr('r', function (d) {
+        return r_scale(d[1]);
+      }).attr('fill', '#D1AB0E');
+
+      svg.selectAll('p').data(data).enter().append('circle').attr('cx', function (d) {
+        return x_scale(d[0]);
+      }).attr('cy', function (d) {
+        return y_scale(d[2]);
+      }).attr('r', function (d) {
+        return r_scale(d[2]);
+      }).attr('fill', 'green');
+
+      return chart;
+    }
+  }, {
+    key: 'makeSpinner',
+    value: function makeSpinner(chart) {
+      var spinner = __WEBPACK_IMPORTED_MODULE_9_d3__["g" /* select */](chart).classed("loader");
+
+      return chart;
+    }
+  }, {
     key: 'render',
     value: function render() {
 
       var chart = new __WEBPACK_IMPORTED_MODULE_10_react_faux_dom___default.a.Element('div');
 
-      if (!this.state) {
-        return __WEBPACK_IMPORTED_MODULE_8_react___default.a.createElement(
-          'div',
-          null,
-          'Waiting...'
-        );
-      } else {
-        var _state = this.state,
-            BeefFarts = _state.BeefFarts,
-            DairyFarts = _state.DairyFarts;
-
-        var data = this.makeData(BeefFarts, DairyFarts);
-        console.log(data);
-
-        // let data = [
-        //   [1990, 119.1, 39.4],
-        //   [1991, 119.7, 39],
-        //   [1992, 125, 38.5],
-        //   [1993, 127.7, 38.2],
-        //   [1994, 131.3, 37.6],
-        //   [1995, 135.5, 37.5],
-        //   [1996, 134.8, 37],
-        //   [1997, 131.5, 36.9],
-        //   [1998, 129.8, 36.6],
-        //   [1999, 129, 37.6],
-        //   [2000, 126.7, 38],
-        //   [2001, 125.9, 37.7],
-        //   [2002, 126, 37.8],
-        //   [2003, 126, 38],
-        //   [2004, 123.9, 36.9],
-        //   [2005, 125.2, 37.6],
-        //   [2006, 127, 38.4],
-        //   [2007, 128.1, 40],
-        //   [2008, 126.9, 40.6],
-        //   [2009, 125.8, 41],
-        //   [2010, 124.6, 40.7],
-        //   [2011, 121.8, 41.1],
-        //   [2012, 119.1, 41.7],
-        //   [2013, 118, 41.6],
-        //   [2014, 116.5, 42],
-        //   [2015, 118.1, 42.6]
-        // ];
-
-        var chart_width = 800;
-        var chart_height = 400;
-        var padding = 50;
-
-        //svg
-
-        var svg = __WEBPACK_IMPORTED_MODULE_9_d3__["g" /* select */](chart).append('svg').attr('width', chart_width).attr('height', chart_height);
-
-        var x_scale = __WEBPACK_IMPORTED_MODULE_9_d3__["f" /* scaleLinear */]().domain([1990, 2015]).range([padding, chart_width - padding * 2]);
-
-        var y_scale = __WEBPACK_IMPORTED_MODULE_9_d3__["f" /* scaleLinear */]().domain([__WEBPACK_IMPORTED_MODULE_9_d3__["e" /* min */](data, function (d) {
-          return d[2];
-        }), __WEBPACK_IMPORTED_MODULE_9_d3__["d" /* max */](data, function (d) {
-          return d[1];
-        })]).range([chart_height - padding, padding]);
-
-        var r_scale = __WEBPACK_IMPORTED_MODULE_9_d3__["f" /* scaleLinear */]().domain([__WEBPACK_IMPORTED_MODULE_9_d3__["e" /* min */](data, function (d) {
-          return d[2];
-        }), __WEBPACK_IMPORTED_MODULE_9_d3__["d" /* max */](data, function (d) {
-          return d[1];
-        })]).range([1, 10]);
-
-        //axis
-
-        var x_axis = __WEBPACK_IMPORTED_MODULE_9_d3__["a" /* axisBottom */](x_scale).tickFormat(__WEBPACK_IMPORTED_MODULE_9_d3__["c" /* format */]("d")).ticks(20);
-        // .ticks(6)
-        // .tickValues([0, 150, 250, 600, 700]);
-
-
-        svg.append('g').attr('class', 'x-axis').attr('transform', 'translate(0,' + (chart_height - padding) + ')').call(x_axis);
-
-        var y_axis = __WEBPACK_IMPORTED_MODULE_9_d3__["b" /* axisLeft */](y_scale).ticks(5);
-        // .tickFormat(d => d + '%')
-
-
-        svg.append('g').attr('class', 'y-axis').attr('transform', 'translate(' + padding + ', 0)').call(y_axis);
-
-        //circles
-        svg.selectAll('circle').data(data).enter().append('circle').attr('cx', function (d) {
-          return x_scale(d[0]);
-        }).attr('cy', function (d) {
-          return y_scale(d[1]);
-        }).attr('r', function (d) {
-          return r_scale(d[1]);
-        }).attr('fill', '#D1AB0E');
-
-        svg.selectAll('p').data(data).enter().append('circle').attr('cx', function (d) {
-          return x_scale(d[0]);
-        }).attr('cy', function (d) {
-          return y_scale(d[2]);
-        }).attr('r', function (d) {
-          return r_scale(d[2]);
-        }).attr('fill', 'green');
-      }
+      chart = this.state ? this.makeSpinner(chart) : this.makeSpinner(chart);
 
       return __WEBPACK_IMPORTED_MODULE_8_react___default.a.createElement(
         'div',
