@@ -28,6 +28,6 @@ module.exports = {
   devServer: {
     port: 3000,
     inline: true,
-    contentBase: __dirname + '/build'
+    contentBase: __dirname
   }
 };
