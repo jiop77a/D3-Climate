@@ -29715,7 +29715,7 @@ var CowFarts = function (_Component) {
   }, {
     key: 'makeSpinner',
     value: function makeSpinner(chart) {
-      var spinner = __WEBPACK_IMPORTED_MODULE_9_d3__["g" /* select */](chart).classed("loader");
+      var spinner = __WEBPACK_IMPORTED_MODULE_9_d3__["g" /* select */](chart).attr('class', 'loader');
 
       return chart;
     }
@@ -29725,7 +29725,7 @@ var CowFarts = function (_Component) {
 
       var chart = new __WEBPACK_IMPORTED_MODULE_10_react_faux_dom___default.a.Element('div');
 
-      chart = this.state ? this.makeSpinner(chart) : this.makeSpinner(chart);
+      chart = this.state ? this.makeChart(chart) : this.makeSpinner(chart);
 
       return __WEBPACK_IMPORTED_MODULE_8_react___default.a.createElement(
         'div',
