@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import CowFarts from './cow_farts.js';
+import Test from './test.jsx';
 
 class Main extends Component {
   constructor(props) {
@@ -12,6 +13,7 @@ class Main extends Component {
       <div>
 
         <div>React Application!</div>
+        <Test />
         <CowFarts />
       </div>
     );
